@@ -156,10 +156,6 @@ class Html
             }
         }
 
-        /*if($node->nodeName === 'br') {
-            $element->addTextBreak();
-        }*/
-
         if ($newElement === null) {
             $newElement = $element;
         }
@@ -238,9 +234,9 @@ class Html
         // @todo Find better error checking for this one
         // if (method_exists($element, 'addText')) {
             if($trimmedNodeValue = trim($node->nodeValue)) {
-                $element->addText($trimmedNodeValue, $styles['font'], $styles['paragraph']);
+                $stripDoubleSpaces = preg_replace('# +#', ' ', $node->nodeValue);
+                $element->addText($stripDoubleSpaces, $styles['font'], $styles['paragraph']);
             }
-
 
         // }
 
