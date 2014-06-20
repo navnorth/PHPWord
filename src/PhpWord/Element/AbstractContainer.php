@@ -159,6 +159,16 @@ abstract class AbstractContainer extends AbstractElement
     }
 
     /**
+     * Get element at the specified index
+     *
+     * @return array
+     */
+    public function getElementAt($index)
+    {
+        return isset($this->elements[$index]) ? $this->elements[$index] : null;
+    }
+
+    /**
      * Count elements
      *
      * @return int

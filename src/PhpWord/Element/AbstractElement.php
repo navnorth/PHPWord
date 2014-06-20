@@ -102,6 +102,13 @@ abstract class AbstractElement
     private $parentContainer;
 
     /**
+     * Parent container element
+     *
+     * @var AbstractContainer
+     */
+    private $parentContainerElement;
+
+    /**
      * Has media relation flag; true for Link, Image, and Object
      *
      * @var bool
@@ -270,6 +277,7 @@ abstract class AbstractElement
     public function setParentContainer(AbstractElement $container)
     {
         $this->parentContainer = substr(get_class($container), strrpos(get_class($container), '\\') + 1);
+        $this->parentContainerElement = $container;
 
         // Set nested level
         $this->nestedLevel = $container->getNestedLevel();
@@ -381,5 +389,48 @@ abstract class AbstractElement
         }
 
         return $value;
+    }
+
+    public function getPreviousElement()
+    {
+        if($parent = $this->parentContainerElement)
+        {
+            $last = null;
+
+            foreach($parent->getElements() as $e)
+            {
+                if($e == $this)
+                {
+                    return $last;
+                }
+
+                $last = $e;
+            }
+        }
+
+        return null;
+    }
+
+    public function getNextElement()
+    {
+        if($parent = $this->parentContainerElement)
+        {
+            $returnNext = false;
+
+            foreach($parent->getElements() as $e)
+            {
+                if($returnNext)
+                {
+                    return $e;
+                }
+
+                if($e == $this)
+                {
+                    $returnNext = true;
+                }
+            }
+        }
+
+        return null;
     }
 }

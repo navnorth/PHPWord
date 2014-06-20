@@ -18,73 +18,31 @@
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
 use \PhpOffice\PhpWord\Element\ListItemRun as ListItemRunElement;
-use \PhpOffice\PhpWord\Element\ListItem as ListItemElement;
 
 /**
  * ListItem element HTML writer
  *
  * @since 0.10.0
  */
-class ListItem extends AbstractElement
+class ListItemRun extends ListItem
 {
-
     /**
-     * Write opening
-     *
-     * @return string
-     */
-    protected function writeOpening()
-    {
-        $content = '';
-
-        $previous = $this->element->getPreviousElement();
-
-        if(!($previous instanceof ListItemElement || $previous instanceof ListItemRunElement))
-        {
-            $content .= '<ul>'.PHP_EOL;
-        }
-
-        $content .= '<li>';
-
-        return $content;
-    }
-
-    /**
-     * Write ending
-     *
-     * @return string
-     */
-    protected function writeClosing()
-    {
-        $content = '';
-
-        $content .= '</li>' . PHP_EOL;
-
-        $next = $this->element->getNextElement();
-
-        if(!($next instanceof ListItemElement || $next instanceof ListItemRunElement))
-        {
-            $content .= '</ul>';
-        }
-
-        return $content;
-    }
-
-    /**
-     * Write list item
+     * Write list item run
      *
      * @return string
      */
     public function write()
     {
-        if (!$this->element instanceof ListItemElement) {
+        if (!$this->element instanceof ListItemRunElement) {
             return '';
         }
+
+        $containerWriter = new Container($this->parentWriter, $this->element);
 
         $content = '';
 
         $content .= $this->writeOpening();
-        $content .= htmlspecialchars($this->element->getTextObject()->getText());
+        $content .= $containerWriter->write();
         $content .= $this->writeClosing();
 
         return $content;

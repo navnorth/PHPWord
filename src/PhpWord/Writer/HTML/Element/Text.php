@@ -176,7 +176,10 @@ class Text extends AbstractElement
         if ($fStyleIsObject) {
             $styleWriter = new FontStyleWriter($fontStyle);
             $style = $styleWriter->write();
+        } else {
+            $style = $fontStyle;
         }
+
         if ($style) {
             $attribute = $fStyleIsObject ? 'style' : 'class';
             $this->openingTags = "<span {$attribute}=\"{$style}\">";

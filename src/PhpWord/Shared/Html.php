@@ -44,7 +44,7 @@ class Html
 
         // Preprocess: remove all line ends, decode HTML entity,
         // fix ampersand and angle brackets and add body tag for HTML fragments
-        $html = str_replace(array("\n", "\r"), '', $html);
+        $html = str_replace(array("\n", "\r"), ' ', $html);
         $html = str_replace(array('&lt;', '&gt;', '&amp;'), array('_lt_', '_gt_', '_amp_'), $html);
         $html = html_entity_decode($html, ENT_QUOTES, 'UTF-8');
         $html = str_replace('&', '&amp;', $html);
@@ -125,7 +125,9 @@ class Html
             'td'        => array('Table',       $node,  $element,   $styles,    null,   'addCell',      true),
             'ul'        => array('List',        null,   null,       $styles,    $data,  3,              null),
             'ol'        => array('List',        null,   null,       $styles,    $data,  7,              null),
-            'li'        => array('ListItem',    $node,  $element,   $styles,    $data,  null,           null),
+            'li'        => array('ListItemRun', $node,  $element,   $styles,    $data,  null,           null),
+            'br'        => array('Break',       $node,  $element,   null,       null,   null
+                ,           null),
         );
 
         $newElement = null;
@@ -154,6 +156,10 @@ class Html
             }
         }
 
+        /*if($node->nodeName === 'br') {
+            $element->addTextBreak();
+        }*/
+
         if ($newElement === null) {
             $newElement = $element;
         }
@@ -171,13 +177,11 @@ class Html
      */
     private static function parseChildNodes($node, $element, $styles, $data)
     {
-        if ($node->nodeName != 'li') {
-            $cNodes = $node->childNodes;
-            if (count($cNodes) > 0) {
-                foreach ($cNodes as $cNode) {
-                    if ($element instanceof AbstractContainer) {
-                        self::parseNode($cNode, $element, $styles, $data);
-                    }
+        $cNodes = $node->childNodes;
+        if (count($cNodes) > 0) {
+            foreach ($cNodes as $cNode) {
+                if ($element instanceof AbstractContainer) {
+                    self::parseNode($cNode, $element, $styles, $data);
                 }
             }
         }
@@ -233,7 +237,11 @@ class Html
         // Commented as source of bug #257. `method_exists` doesn't seems to work properly in this case.
         // @todo Find better error checking for this one
         // if (method_exists($element, 'addText')) {
-            $element->addText($node->nodeValue, $styles['font'], $styles['paragraph']);
+            if($trimmedNodeValue = trim($node->nodeValue)) {
+                $element->addText($trimmedNodeValue, $styles['font'], $styles['paragraph']);
+            }
+
+
         // }
 
         return null;
@@ -315,21 +323,25 @@ class Html
      * @param array $data
      * @return null
      *
-     * @todo This function is almost the same like `parseChildNodes`. Merged?
-     * @todo As soon as ListItem inherits from AbstractContainer or TextRun delete parsing part of childNodes
      */
-    private static function parseListItem($node, $element, &$styles, $data)
+    private static function parseListItemRun($node, $element, &$styles, $data)
     {
-        $cNodes = $node->childNodes;
-        if (count($cNodes) > 0) {
-            $text = '';
-            foreach ($cNodes as $cNode) {
-                if ($cNode->nodeName == '#text') {
-                    $text = $cNode->nodeValue;
-                }
-            }
-            $element->addListItem($text, $data['listdepth'], $styles['font'], $styles['list'], $styles['paragraph']);
-        }
+        $listItemRun = $element->addListItemRun($data['listdepth'], $styles['font'], $styles['list'], $styles['paragraph']);
+
+        return $listItemRun;
+    }
+
+    /**
+     * Parse break (br) node
+     *
+     * @param \DOMNode $node
+     * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
+     * @param array $styles
+     * @return \PhpOffice\PhpWord\Element\TextRun
+     */
+    private static function parseBreak($node, $element)
+    {
+        $element->addTextBreak();
 
         return null;
     }
