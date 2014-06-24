@@ -44,8 +44,10 @@ class TCPDF extends AbstractRenderer implements WriterInterface
         $fileHandle = parent::prepareForSave($filename);
 
         //  PDF settings
-        $paperSize = current($this->getPhpWord()->getSections())->getStyle()->getPaperSize();
-        $orientation = 'P';
+        $firstSection = current($this->getPhpWord()->getSections());
+
+        $paperSize = strtoupper($firstSection->getStyle()->getPaperSize());
+        $orientation = substr($firstSection->getStyle()->getOrientation(), 0, 1);
 
         // Create PDF
         $pdf = new \TCPDF($orientation, 'pt', $paperSize);

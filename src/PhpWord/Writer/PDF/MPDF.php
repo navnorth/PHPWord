@@ -44,8 +44,10 @@ class MPDF extends AbstractRenderer implements WriterInterface
         $fileHandle = parent::prepareForSave($filename);
 
         //  PDF settings
-        $paperSize = strtoupper(current($this->getPhpWord()->getSections())->getStyle()->getPaperSize());
-        $orientation = strtoupper('portrait');
+        $firstSection = current($this->getPhpWord()->getSections());
+
+        $paperSize = strtoupper($firstSection->getStyle()->getPaperSize());
+        $orientation = strtoupper($firstSection->getStyle()->getOrientation());
 
         //  Create PDF
         $pdf = new \mpdf();
