@@ -44,7 +44,7 @@ class DomPDF extends AbstractRenderer implements WriterInterface
         $fileHandle = parent::prepareForSave($filename);
 
         //  PDF settings
-        $paperSize = 'A4';
+        $paperSize = current($this->getPhpWord()->getSections())->getStyle()->getPaperSize();
         $orientation = 'portrait';
 
         //  Create PDF
