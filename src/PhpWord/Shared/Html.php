@@ -126,8 +126,9 @@ class Html
             'ul'        => array('List',        null,   null,       $styles,    $data,  3,              null),
             'ol'        => array('List',        null,   null,       $styles,    $data,  7,              null),
             'li'        => array('ListItemRun', $node,  $element,   $styles,    $data,  null,           null),
-            'br'        => array('Break',       $node,  $element,   null,       null,   null
-                ,           null),
+            'br'        => array('Break',       $node,  $element,   null,       null,   null,           null),
+            'dt'        => array('Property',    null,   null,       $styles,    null,   'bold',         true),
+
         );
 
         $newElement = null;
