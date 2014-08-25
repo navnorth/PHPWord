@@ -27,6 +27,7 @@ use PhpOffice\PhpWord\Exception\Exception;
  * @method Collection\Footnotes getFootnotes()
  * @method Collection\Endnotes getEndnotes()
  * @method Collection\Charts getCharts()
+ * @method int addBookmark(Element\Bookmark $bookmark)
  * @method int addTitle(Element\Title $title)
  * @method int addFootnote(Element\Footnote $footnote)
  * @method int addEndnote(Element\Endnote $endnote)
@@ -81,30 +82,28 @@ class PhpWord
      */
     public function __construct()
     {
-        $collections = array('Titles', 'Footnotes', 'Endnotes', 'Charts');
+        // Collection
+        $collections = array('Bookmarks', 'Titles', 'Footnotes', 'Endnotes', 'Charts');
         foreach ($collections as $collection) {
             $class = 'PhpOffice\\PhpWord\\Collection\\' . $collection;
             $this->collections[$collection] = new $class();
         }
 
-        $metadata = 'PhpOffice\\PhpWord\\Metadata\\Protection';
-        $this->metadata['Protection'] = new $metadata();
-
-        $metadata = 'PhpOffice\\PhpWord\\Metadata\\DocInfo';
-        $this->metadata['DocInfo'] = new $metadata();
+        // Metadata
+        $metadata = array('DocInfo', 'Protection', 'Compatibility');
+        foreach ($metadata as $meta) {
+            $class = 'PhpOffice\\PhpWord\\Metadata\\' . $meta;
+            $this->metadata[$meta] = new $class();
+        }
     }
 
     /**
      * Dynamic function call to reduce static dependency
      *
-     * Usage:
-     * - Getting and adding collections (Titles, Footnotes, and Endnotes)
-     * - Adding style
-     *
      * @param mixed $function
      * @param mixed $args
+     * @throws \BadMethodCallException
      * @return mixed
-     *
      * @since 0.12.0
      */
     public function __call($function, $args)
@@ -115,7 +114,7 @@ class PhpWord
         $addCollection = array();
         $addStyle = array();
 
-        $collections = array('Title', 'Footnote', 'Endnote', 'Chart');
+        $collections = array('Bookmark', 'Title', 'Footnote', 'Endnote', 'Chart');
         foreach ($collections as $collection) {
             $getCollection[] = strtolower("get{$collection}s");
             $addCollection[] = strtolower("add{$collection}");
@@ -140,7 +139,7 @@ class PhpWord
             /** @var \PhpOffice\PhpWord\Collection\AbstractCollection $collectionObject */
             $collectionObject = $this->collections[$key];
 
-            return $collectionObject->addItem($args[0]);
+            return $collectionObject->addItem(array_key_exists(0, $args) ? $args[0] : null);
         }
 
         // Run add style method
@@ -148,8 +147,8 @@ class PhpWord
             return forward_static_call_array(array('PhpOffice\\PhpWord\\Style', $function), $args);
         }
 
-        // All other methods
-        return null;
+        // Exception
+        throw new \BadMethodCallException("Method $function is not defined.");
     }
 
     /**
@@ -171,6 +170,17 @@ class PhpWord
     public function getProtection()
     {
         return $this->metadata['Protection'];
+    }
+
+    /**
+     * Get compatibility
+     *
+     * @return \PhpOffice\PhpWord\Metadata\Compatibility
+     * @since 0.12.0
+     */
+    public function getCompatibility()
+    {
+        return $this->metadata['Compatibility'];
     }
 
     /**
@@ -209,9 +219,10 @@ class PhpWord
     }
 
     /**
-     * Set default font name
+     * Set default font name.
      *
      * @param string $fontName
+     * @return void
      */
     public function setDefaultFontName($fontName)
     {
@@ -229,9 +240,10 @@ class PhpWord
     }
 
     /**
-     * Set default font size
+     * Set default font size.
      *
      * @param int $fontSize
+     * @return void
      */
     public function setDefaultFontSize($fontSize)
     {
@@ -252,14 +264,16 @@ class PhpWord
     /**
      * Load template by filename
      *
+     * @deprecated 0.12.0 Use `new TemplateProcessor($documentTemplate)` instead.
+     *
      * @param  string $filename Fully qualified filename.
-     * @return Template
+     * @return TemplateProcessor
      * @throws \PhpOffice\PhpWord\Exception\Exception
      */
     public function loadTemplate($filename)
     {
         if (file_exists($filename)) {
-            return new Template($filename);
+            return new TemplateProcessor($filename);
         } else {
             throw new Exception("Template file {$filename} not found.");
         }
@@ -285,7 +299,6 @@ class PhpWord
             'PDF'       => 'application/pdf',
         );
 
-        /** @var \PhpOffice\PhpWord\Writer\WriterInterface $writer */
         $writer = IOFactory::createWriter($this, $format);
 
         if ($download === true) {
@@ -331,7 +344,7 @@ class PhpWord
     /**
      * Set document properties object
      *
-     * @param \PhpOffice\PhpWord\Metadata\DocInfo
+     * @param \PhpOffice\PhpWord\Metadata\DocInfo $documentProperties
      * @return self
      * @deprecated 0.12.0
      * @codeCoverageIgnore

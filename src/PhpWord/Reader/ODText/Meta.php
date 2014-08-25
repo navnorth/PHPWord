@@ -28,12 +28,13 @@ use PhpOffice\PhpWord\Shared\XMLReader;
 class Meta extends AbstractPart
 {
     /**
-     * Read meta.xml
+     * Read meta.xml.
      *
      * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * @return void
      * @todo Process property type
      */
-    public function read(PhpWord &$phpWord)
+    public function read(PhpWord $phpWord)
     {
         $xmlReader = new XMLReader();
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);

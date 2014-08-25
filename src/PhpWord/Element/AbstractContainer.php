@@ -22,6 +22,7 @@ namespace PhpOffice\PhpWord\Element;
  *
  * @method Text addText(string $text, mixed $fStyle = null, mixed $pStyle = null)
  * @method TextRun addTextRun(mixed $pStyle = null)
+ * @method Bookmark addBookmark(string $name)
  * @method Link addLink(string $target, string $text = null, mixed $fStyle = null, mixed $pStyle = null)
  * @method PreserveText addPreserveText(string $text, mixed $fStyle = null, mixed $pStyle = null)
  * @method void addTextBreak(int $count = 1, mixed $fStyle = null, mixed $pStyle = null)
@@ -43,6 +44,7 @@ namespace PhpOffice\PhpWord\Element;
  * @method Shape addObject(string $type, mixed $style = null)
  * @method Chart addChart(string $type, array $categories, array $values, array $style = null)
  * @method FormField addFormField(string $type, mixed $fStyle = null, mixed $pStyle = null)
+ * @method SDT addSDT(string $type)
  *
  * @since 0.10.0
  */
@@ -76,18 +78,22 @@ abstract class AbstractContainer extends AbstractElement
      */
     public function __call($function, $args)
     {
-        $elements = array('Text', 'TextRun', 'Link', 'PreserveText', 'TextBreak',
-            'ListItem', 'ListItemRun', 'Table', 'Image', 'Object', 'Footnote',
-            'Endnote', 'CheckBox', 'TextBox', 'Field', 'Line', 'Shape',
-            'Title', 'TOC', 'PageBreak', 'Chart', 'FormField');
+        $elements = array(
+            'Text', 'TextRun', 'Bookmark', 'Link', 'PreserveText', 'TextBreak',
+            'ListItem', 'ListItemRun', 'Table', 'Image', 'Object',
+            'Footnote', 'Endnote', 'CheckBox', 'TextBox', 'Field',
+            'Line', 'Shape', 'Title', 'TOC', 'PageBreak',
+            'Chart', 'FormField', 'SDT'
+        );
         $functions = array();
-        for ($i = 0; $i < count($elements); $i++) {
-            $functions[$i] = 'add' . $elements[$i];
+        foreach ($elements as $element) {
+            $functions['add' . strtolower($element)] = $element;
         }
 
         // Run valid `add` command
-        if (in_array($function, $functions)) {
-            $element = str_replace('add', '', $function);
+        $function = strtolower($function);
+        if (array_key_exists($function, $functions)) {
+            $element = $functions[$function];
 
             // Special case for TextBreak
             // @todo Remove the `$count` parameter in 1.0.0 to make this element similiar to other elements?
@@ -194,6 +200,7 @@ abstract class AbstractContainer extends AbstractElement
         );
         $validContainers = array(
             'Text'          => $allContainers,
+            'Bookmark'      => $allContainers,
             'Link'          => $allContainers,
             'TextBreak'     => $allContainers,
             'Image'         => $allContainers,
@@ -202,6 +209,7 @@ abstract class AbstractContainer extends AbstractElement
             'Line'          => $allContainers,
             'Shape'         => $allContainers,
             'FormField'     => $allContainers,
+            'SDT'           => $allContainers,
             'TextRun'       => array('Section', 'Header', 'Footer', 'Cell', 'TextBox'),
             'ListItem'      => array('Section', 'Header', 'Footer', 'Cell', 'TextBox'),
             'ListItemRun'   => array('Section', 'Header', 'Footer', 'Cell', 'TextBox'),

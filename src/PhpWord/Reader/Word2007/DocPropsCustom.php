@@ -29,11 +29,12 @@ use PhpOffice\PhpWord\Shared\XMLReader;
 class DocPropsCustom extends AbstractPart
 {
     /**
-     * Read custom document properties
+     * Read custom document properties.
      *
      * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * @return void
      */
-    public function read(PhpWord &$phpWord)
+    public function read(PhpWord $phpWord)
     {
         $xmlReader = new XMLReader();
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);

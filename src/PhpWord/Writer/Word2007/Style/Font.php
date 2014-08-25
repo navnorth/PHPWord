@@ -32,7 +32,9 @@ class Font extends AbstractStyle
     private $isInline = false;
 
     /**
-     * Write style
+     * Write style.
+     *
+     * @return void
      */
     public function write()
     {
@@ -51,7 +53,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Write full style
+     * Write full style.
+     *
+     * @return void
      */
     private function writeStyle()
     {
@@ -125,14 +129,21 @@ class Font extends AbstractStyle
             $styleWriter = new Shading($xmlWriter, $shading);
             $styleWriter->write();
         }
+        
+        // RTL
+        if ($this->isInline === true) {
+            $styleName = $style->getStyleName();
+            $xmlWriter->writeElementIf($styleName === null && $style->isRTL(), 'w:rtl');
+        }
 
         $xmlWriter->endElement();
     }
 
     /**
-     * Set is inline
+     * Set is inline.
      *
      * @param bool $value
+     * @return void
      */
     public function setIsInline($value)
     {

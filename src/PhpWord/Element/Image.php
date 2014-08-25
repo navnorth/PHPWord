@@ -17,8 +17,10 @@
 
 namespace PhpOffice\PhpWord\Element;
 
+use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use PhpOffice\PhpWord\Exception\InvalidImageException;
 use PhpOffice\PhpWord\Exception\UnsupportedImageTypeException;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\ZipArchive;
 use PhpOffice\PhpWord\Style\Image as ImageStyle;
 
@@ -257,9 +259,10 @@ class Image extends AbstractElement
     }
 
     /**
-     * Set target file name
+     * Set target file name.
      *
      * @param string $value
+     * @return void
      */
     public function setTarget($value)
     {
@@ -277,9 +280,10 @@ class Image extends AbstractElement
     }
 
     /**
-     * Set media index
+     * Set media index.
      *
      * @param integer $value
+     * @return void
      */
     public function setMediaIndex($value)
     {
@@ -311,8 +315,8 @@ class Image extends AbstractElement
             if ($zip->open($zipFilename) !== false) {
                 if ($zip->locateName($imageFilename)) {
                     $isTemp = true;
-                    $zip->extractTo(sys_get_temp_dir(), $imageFilename);
-                    $actualSource = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $imageFilename;
+                    $zip->extractTo(Settings::getTempDir(), $imageFilename);
+                    $actualSource = Settings::getTempDir() . DIRECTORY_SEPARATOR . $imageFilename;
                 }
             }
             $zip->close();
@@ -358,9 +362,10 @@ class Image extends AbstractElement
     }
 
     /**
-     * Check memory image, supported type, image functions, and proportional width/height
+     * Check memory image, supported type, image functions, and proportional width/height.
      *
      * @param string $source
+     * @return void
      * @throws \PhpOffice\PhpWord\Exception\InvalidImageException
      * @throws \PhpOffice\PhpWord\Exception\UnsupportedImageTypeException
      */
@@ -395,9 +400,10 @@ class Image extends AbstractElement
     }
 
     /**
-     * Set source type
+     * Set source type.
      *
      * @param string $source
+     * @return void
      */
     private function setSourceType($source)
     {
@@ -416,15 +422,22 @@ class Image extends AbstractElement
     /**
      * Get image size from archive
      *
+     * @since 0.12.0 Throws CreateTemporaryFileException.
+     *
      * @param string $source
      * @return array|null
+     * @throws \PhpOffice\PhpWord\Exception\CreateTemporaryFileException
      */
     private function getArchiveImageSize($source)
     {
         $imageData = null;
         $source = substr($source, 6);
         list($zipFilename, $imageFilename) = explode('#', $source);
-        $tempFilename = tempnam(sys_get_temp_dir(), 'PHPWordImage');
+
+        $tempFilename = tempnam(Settings::getTempDir(), 'PHPWordImage');
+        if (false === $tempFilename) {
+            throw new CreateTemporaryFileException();
+        }
 
         $zip = new ZipArchive();
         if ($zip->open($zipFilename) !== false) {
@@ -432,7 +445,7 @@ class Image extends AbstractElement
                 $imageContent = $zip->getFromName($imageFilename);
                 if ($imageContent !== false) {
                     file_put_contents($tempFilename, $imageContent);
-                    $imageData = @getimagesize($tempFilename);
+                    $imageData = getimagesize($tempFilename);
                     unlink($tempFilename);
                 }
             }
@@ -443,7 +456,9 @@ class Image extends AbstractElement
     }
 
     /**
-     * Set image functions and extensions
+     * Set image functions and extensions.
+     *
+     * @return void
      */
     private function setFunctions()
     {
@@ -476,10 +491,11 @@ class Image extends AbstractElement
     }
 
     /**
-     * Set proportional width/height if one dimension not available
+     * Set proportional width/height if one dimension not available.
      *
      * @param integer $actualWidth
      * @param integer $actualHeight
+     * @return void
      */
     private function setProportionalSize($actualWidth, $actualHeight)
     {

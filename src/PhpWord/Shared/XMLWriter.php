@@ -66,12 +66,12 @@ class XMLWriter
             $this->xmlWriter->openMemory();
         } else {
             // Create temporary filename
-            $this->tempFile = @tempnam($tempFolder, 'xml');
+            $this->tempFile = tempnam($tempFolder, 'xml');
 
             // Fallback to memory when temporary file cannot be used
             // @codeCoverageIgnoreStart
             // Can't find any test case. Uncomment when found.
-            if ($this->xmlWriter->openUri($this->tempFile) === false) {
+            if (false === $this->tempFile || false === $this->xmlWriter->openUri($this->tempFile)) {
                 $this->xmlWriter->openMemory();
             }
             // @codeCoverageIgnoreEnd
@@ -149,6 +149,7 @@ class XMLWriter
      * @param string $element
      * @param string|array $attributes
      * @param string $value
+     * @return void
      */
     public function writeElementBlock($element, $attributes, $value = null)
     {
@@ -169,6 +170,7 @@ class XMLWriter
      * @param string $element
      * @param string $attribute
      * @param mixed $value
+     * @return void
      */
     public function writeElementIf($condition, $element, $attribute = null, $value = null)
     {
@@ -189,6 +191,7 @@ class XMLWriter
      * @param bool $condition
      * @param string $attribute
      * @param mixed $value
+     * @return void
      */
     public function writeAttributeIf($condition, $attribute, $value)
     {

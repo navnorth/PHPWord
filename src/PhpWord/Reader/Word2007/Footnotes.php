@@ -42,11 +42,12 @@ class Footnotes extends AbstractPart
     protected $element = 'footnote';
 
     /**
-     * Read (footnotes|endnotes).xml
+     * Read (footnotes|endnotes).xml.
      *
      * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * @return void
      */
-    public function read(PhpWord &$phpWord)
+    public function read(PhpWord $phpWord)
     {
         $getMethod = "get{$this->collection}";
         $collection = $phpWord->$getMethod()->getItems();

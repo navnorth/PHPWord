@@ -53,6 +53,8 @@ column shows the containers while the rows lists the elements.
 +-------+-----------------+-----------+----------+----------+---------+------------+------------+
 | 22    | Form fields     | v         | v        | v        | v       | v          | v          |
 +-------+-----------------+-----------+----------+----------+---------+------------+------------+
+| 23    | Bookmarks       | v         | -        | -        | v       | v          | -          |
++-------+-----------------+-----------+----------+----------+---------+------------+------------+
 
 Legend:
 
@@ -129,12 +131,13 @@ You can add Hyperlinks to the document by using the function addLink:
 
 .. code-block:: php
 
-    $section->addLink($linkSrc, [$linkName], [$fontStyle], [$paragraphStyle]);
+    $section->addLink($linkSrc, [$linkName], [$fontStyle], [$paragraphStyle], [$isInternal]);
 
 -  ``$linkSrc`` The URL of the link.
 -  ``$linkName`` Placeholder of the URL that appears in the document.
 -  ``$fontStyle`` See "Font style" section.
 -  ``$paragraphStyle`` See "Paragraph style" section.
+-  ``$isInternal`` Set to true, if the link points to a bookmark inside the document
 
 Preserve texts
 ~~~~~~~~~~~~~~
@@ -397,7 +400,23 @@ To be completed.
 Lines
 -----
 
-To be completed.
+Line elements can be added to sections by using ``addLine``.
+
+.. code-block:: php
+
+    $linestyle = array('weight' => 1, 'width' => 100, 'height' => 0, 'color' => '#b2a68b');
+    $section->addLine($lineStyle)
+
+Available line style attributes:
+
+-  ``weight`` Line width in twips
+-  ``color`` Defines the color of stroke. The hex value must be introduced with #.
+-  ``dash`` Line types: dash, rounddot, squaredot, dashdot, longdash, longdashdot, longdashdotdot
+-  ``beginArrow`` Start type of arrow: block, open, classic, diamond, oval
+-  ``endArrow`` End type of arrow: block, open, classic, diamond, ovel
+-  ``width`` Line-object width in pt
+-  ``height`` Line-object height in pt
+-  ``flip`` Flip the line element: true, false
 
 Shapes
 ------
@@ -413,3 +432,14 @@ Form fields
 -----------
 
 To be completed.
+
+Bookmarks
+~~~~~
+
+You can add Bookmarks to the document by using the function addBookmark:
+
+.. code-block:: php
+
+    $section->addBookmark($name);
+
+-  ``$name`` The name of the bookmark which can be referenced in the addLink-Function as target. Should obviously be unique throughout the document.

@@ -4,7 +4,7 @@ This is the changelog between releases of PHPWord. Releases are listed in revers
 
 ## 0.12.0 - Not yet released
 
-This release added form fields (textinput, checkbox, and dropdown), drawing shapes (arc, curve, line, polyline, rect, oval), and basic 2D chart (pie, doughnut, bar, line, area, scatter, radar) elements along with some new styles.
+This release added form fields (textinput, checkbox, and dropdown), drawing shapes (arc, curve, line, polyline, rect, oval), and basic 2D chart (pie, doughnut, bar, line, area, scatter, radar) elements along with some new styles. Basic MsDoc reader is introduced.
 
 ### Features
 
@@ -18,7 +18,12 @@ This release added form fields (textinput, checkbox, and dropdown), drawing shap
 - Chart: Basic 2D chart (pie, doughnut, bar, line, area, scatter, radar) - @ivanlanin GH-278
 - Chart: 3D charts and ability to set width and height - @ivanlanin
 - FormField: Ability to add textinput, checkbox, and dropdown form elements - @ivanlanin GH-266
-- Security: Ability to define document protection (readOnly, comments, trackedChanges, forms) - @ivanlanin
+- Setting: Ability to define document protection (readOnly, comments, trackedChanges, forms) - @ivanlanin
+- Setting: Ability to remove [Compatibility Mode] text in the MS Word title bar - @ivanlanin
+- SDT: Ability to add structured document tag elements (comboBox, dropDownList, date) - @ivanlanin
+- Paragraph: Support for paragraph with borders - @ivanlanin GH-294
+- Word2007 Writer : Support for RTL - @Progi1984 GH-331
+- MsDOC Reader: Basic MsDOC Reader - @Progi1984 GH-23 GH-287
 
 ### Bugfixes
 
@@ -26,6 +31,9 @@ This release added form fields (textinput, checkbox, and dropdown), drawing shap
 - `addHTML` encoding and ampersand fixes for PHP 5.3 - @bskrtich GH-270
 - Page breaks on titles and tables - @ivanlanin GH-274
 - Table inside vertical border does not rendered properly - @ivanlanin GH-280
+- `add<elementName>` of container should be case insensitive, e.g. `addToc` should be accepted, not only `addTOC` - @ivanlanin GH-294
+- Fix specific borders (and margins) were not written correctly in word2007 writer - @pscheit GH-327
+- "HTML is not a valid writer" exception while running "Sample_36_RTL.php" - @RomanSyroeshko GH-340
 
 ### Deprecated
 
@@ -33,13 +41,19 @@ This release added form fields (textinput, checkbox, and dropdown), drawing shap
 - `Element\Section::getSettings()` and `Element\Section::setSettings()` replaced by `Element\Section::getStyle()` and `Element\Section::setStyle()`
 - `Shared\Drawing` and `Shared\Font` merged into `Shared\Converter`
 - `DocumentProperties` replaced by `Metadata\DocInfo`
+- `Template` replaced by `TemplateProcessor`
+- `PhpWord->loadTemplate($filename)`
 
 ### Miscellaneous
 
 - Docs: Add known issue on `README` about requirement for temporary folder to be writable and update `samples/index.php` for this requirement check - @ivanlanin GH-238
+- Docs: Correct elements.rst about Line - @chrissharkman GH-292
 - PclZip: Remove temporary file after used - @andrew-kzoo GH-265
 - Autoloader: Add the ability to set the autoloader options - @bskrtich GH-267
 - Element: Refactor elements to move set relation Id from container to element - @ivanlanin
+- Introduced CreateTemporaryFileException, CopyFileException - @RomanSyroeshko
+- Settings: added method to set user defined temporary directory - @RomanSyroeshko GH-310
+- Renamed `Template` into `TemplateProcessor` - @RomanSyroeshko GH-216
 
 ## 0.11.1 - 2 June 2014
 

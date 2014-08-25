@@ -52,11 +52,12 @@ class DocPropsCore extends AbstractPart
     protected $callbacks = array('dcterms:created' => 'strtotime', 'dcterms:modified' => 'strtotime');
 
     /**
-     * Read core/extended document properties
+     * Read core/extended document properties.
      *
      * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * @return void
      */
-    public function read(PhpWord &$phpWord)
+    public function read(PhpWord $phpWord)
     {
         $xmlReader = new XMLReader();
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);

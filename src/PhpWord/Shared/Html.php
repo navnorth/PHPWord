@@ -27,13 +27,14 @@ use PhpOffice\PhpWord\Element\AbstractContainer;
 class Html
 {
     /**
-     * Add HTML parts
+     * Add HTML parts.
      *
      * Note: $stylesheet parameter is removed to avoid PHPMD error for unused parameter
      *
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element Where the parts need to be added
      * @param string $html The code to parse
      * @param bool $fullHTML If it's a full HTML, no need to add 'body' tag
+     * @return void
      */
     public static function addHtml($element, $html, $fullHTML = false)
     {
@@ -88,12 +89,13 @@ class Html
     }
 
     /**
-     * Parse a node and add a corresponding element to the parent element
+     * Parse a node and add a corresponding element to the parent element.
      *
      * @param \DOMNode $node node to parse
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element object to add an element corresponding with the node
      * @param array $styles Array with all styles
      * @param array $data Array to transport data to a next level in the DOM tree, for example level of listitems
+     * @return void
      */
     protected static function parseNode($node, $element, $styles = array(), $data = array())
     {
@@ -165,12 +167,13 @@ class Html
     }
 
     /**
-     * Parse child nodes
+     * Parse child nodes.
      *
      * @param \DOMNode $node
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
      * @param array $styles
      * @param array $data
+     * @return void
      */
     private static function parseChildNodes($node, $element, $styles, $data)
     {
@@ -189,7 +192,7 @@ class Html
      *
      * @param \DOMNode $node
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
-     * @param array $styles
+     * @param array &$styles
      * @return \PhpOffice\PhpWord\Element\TextRun
      */
     private static function parseParagraph($node, $element, &$styles)
@@ -204,7 +207,7 @@ class Html
      * Parse heading node
      *
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
-     * @param array $styles
+     * @param array &$styles
      * @param string $argument1 Name of heading style
      * @return \PhpOffice\PhpWord\Element\TextRun
      *
@@ -224,7 +227,7 @@ class Html
      *
      * @param \DOMNode $node
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
-     * @param array $styles
+     * @param array &$styles
      * @return null
      */
     private static function parseText($node, $element, &$styles)
@@ -247,7 +250,7 @@ class Html
     /**
      * Parse property node
      *
-     * @param array $styles
+     * @param array &$styles
      * @param string $argument1 Style name
      * @param string $argument2 Style value
      * @return null
@@ -264,7 +267,7 @@ class Html
      *
      * @param \DOMNode $node
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
-     * @param array $styles
+     * @param array &$styles
      * @param string $argument1 Method name
      * @return \PhpOffice\PhpWord\Element\AbstractContainer $element
      *
@@ -294,8 +297,8 @@ class Html
     /**
      * Parse list node
      *
-     * @param array $styles
-     * @param array $data
+     * @param array &$styles
+     * @param array &$data
      * @param string $argument1 List type
      * @return null
      */
@@ -316,7 +319,7 @@ class Html
      *
      * @param \DOMNode $node
      * @param \PhpOffice\PhpWord\Element\AbstractContainer $element
-     * @param array $styles
+     * @param array &$styles
      * @param array $data
      * @return null
      *

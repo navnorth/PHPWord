@@ -62,9 +62,9 @@ abstract class AbstractPart
     protected $rels = array();
 
     /**
-     * Read part
+     * Read part.
      */
-    abstract public function read(PhpWord &$phpWord);
+    abstract public function read(PhpWord $phpWord);
 
     /**
      * Create new instance
@@ -79,9 +79,10 @@ abstract class AbstractPart
     }
 
     /**
-     * Set relationships
+     * Set relationships.
      *
      * @param array $value
+     * @return void
      */
     public function setRels($value)
     {
@@ -89,16 +90,17 @@ abstract class AbstractPart
     }
 
     /**
-     * Read w:p
+     * Read w:p.
      *
      * @param \PhpOffice\PhpWord\Shared\XMLReader $xmlReader
      * @param \DOMElement $domNode
      * @param mixed $parent
      * @param string $docPart
+     * @return void
      *
      * @todo Get font style for preserve text
      */
-    protected function readParagraph(XMLReader $xmlReader, \DOMElement $domNode, &$parent, $docPart = 'document')
+    protected function readParagraph(XMLReader $xmlReader, \DOMElement $domNode, $parent, $docPart = 'document')
     {
         // Paragraph style
         $paragraphStyle = null;
@@ -164,32 +166,33 @@ abstract class AbstractPart
             if ($runLinkCount == 0) {
                 $parent->addTextBreak(null, $paragraphStyle);
             } else {
-                if ($runLinkCount > 1) {
-                    $textrun = $parent->addTextRun($paragraphStyle);
-                    $textParent = &$textrun;
-                } else {
-                    $textParent = &$parent;
-                }
                 $nodes = $xmlReader->getElements('*', $domNode);
                 foreach ($nodes as $node) {
-                    $this->readRun($xmlReader, $node, $textParent, $docPart, $paragraphStyle);
+                    $this->readRun(
+                        $xmlReader,
+                        $node,
+                        ($runLinkCount > 1) ? $parent->addTextRun($paragraphStyle) : $parent,
+                        $docPart,
+                        $paragraphStyle
+                    );
                 }
             }
         }
     }
 
     /**
-     * Read w:r
+     * Read w:r.
      *
      * @param \PhpOffice\PhpWord\Shared\XMLReader $xmlReader
      * @param \DOMElement $domNode
      * @param mixed $parent
      * @param string $docPart
      * @param mixed $paragraphStyle
+     * @return void
      *
      * @todo Footnote paragraph style
      */
-    protected function readRun(XMLReader $xmlReader, \DOMElement $domNode, &$parent, $docPart, $paragraphStyle = null)
+    protected function readRun(XMLReader $xmlReader, \DOMElement $domNode, $parent, $docPart, $paragraphStyle = null)
     {
         if (!in_array($domNode->nodeName, array('w:r', 'w:hyperlink'))) {
             return;
@@ -241,14 +244,15 @@ abstract class AbstractPart
     }
 
     /**
-     * Read w:tbl
+     * Read w:tbl.
      *
      * @param \PhpOffice\PhpWord\Shared\XMLReader $xmlReader
      * @param \DOMElement $domNode
      * @param mixed $parent
      * @param string $docPart
+     * @return void
      */
-    protected function readTable(XMLReader $xmlReader, \DOMElement $domNode, &$parent, $docPart = 'document')
+    protected function readTable(XMLReader $xmlReader, \DOMElement $domNode, $parent, $docPart = 'document')
     {
         // Table style
         $tblStyle = null;
@@ -301,7 +305,7 @@ abstract class AbstractPart
     }
 
     /**
-     * Read w:pPr
+     * Read w:pPr.
      *
      * @param \PhpOffice\PhpWord\Shared\XMLReader $xmlReader
      * @param \DOMElement $domNode
@@ -337,7 +341,7 @@ abstract class AbstractPart
      *
      * @param \PhpOffice\PhpWord\Shared\XMLReader $xmlReader
      * @param \DOMElement $domNode
-     * @return array
+     * @return array|null
      */
     protected function readFontStyle(XMLReader $xmlReader, \DOMElement $domNode)
     {
@@ -369,6 +373,7 @@ abstract class AbstractPart
             'superScript'         => array(self::READ_EQUAL, 'w:vertAlign', 'w:val', 'superscript'),
             'subScript'           => array(self::READ_EQUAL, 'w:vertAlign', 'w:val', 'subscript'),
             'fgColor'             => array(self::READ_VALUE, 'w:highlight'),
+            'rtl'                 => array(self::READ_TRUE,  'w:rtl'),
         );
 
         return $this->readStyleDefs($xmlReader, $styleNode, $styleDefs);
