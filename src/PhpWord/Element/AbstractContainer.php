@@ -210,7 +210,7 @@ abstract class AbstractContainer extends AbstractElement
             'Shape'         => $allContainers,
             'FormField'     => $allContainers,
             'SDT'           => $allContainers,
-            'TextRun'       => array('Section', 'Header', 'Footer', 'Cell', 'TextBox'),
+            'TextRun'       => array('Section', 'Header', 'Footer', 'Cell', 'TextBox', 'ListItemRun'),
             'ListItem'      => array('Section', 'Header', 'Footer', 'Cell', 'TextBox', 'ListItem', 'ListItemRun'),
             'ListItemRun'   => array('Section', 'Header', 'Footer', 'Cell', 'TextBox', 'ListItem', 'ListItemRun'),
             'Table'         => array('Section', 'Header', 'Footer', 'Cell', 'TextBox'),
