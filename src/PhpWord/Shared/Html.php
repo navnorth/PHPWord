@@ -326,6 +326,8 @@ class Html
      */
     private static function parseListItemRun($node, $element, &$styles, $data)
     {
+        $element = ($element instanceof ListItemRun) ? $element->getParentContainerElement() : $element;
+
         $listItemRun = $element->addListItemRun($data['listdepth'], $styles['font'], $styles['list'], $styles['paragraph']);
 
         return $listItemRun;

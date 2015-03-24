@@ -45,7 +45,8 @@ class Text extends AbstractElement
 
         $xmlWriter->startElement('w:t');
         $xmlWriter->writeAttribute('xml:space', 'preserve');
-        $xmlWriter->writeRaw($this->getText($element->getText()));
+        $xmlWriter->text($this->getText($element->getText()));
+        //$xmlWriter->writeRaw($this->getText($element->getText()));
         $xmlWriter->endElement();
         $xmlWriter->endElement(); // w:r
 

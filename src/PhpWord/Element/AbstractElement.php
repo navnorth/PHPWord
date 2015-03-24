@@ -401,6 +401,11 @@ abstract class AbstractElement
         return $value;
     }
 
+    public function getParentContainerElement()
+    {
+        return $this->parentContainerElement;
+    }
+
     public function getPreviousElement()
     {
         if($parent = $this->parentContainerElement)
