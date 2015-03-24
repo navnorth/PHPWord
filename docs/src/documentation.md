@@ -212,42 +212,88 @@ After installation, you can browse and use the samples that we've provided, eith
 The following is a basic example of the PHPWord library. More examples are provided in the [samples folder](https://github.com/PHPOffice/PHPWord/tree/master/samples/).
 
 ```php
+<?php
 require_once 'src/PhpWord/Autoloader.php';
 \PhpOffice\PhpWord\Autoloader::register();
 
+// Creating the new document...
 $phpWord = new \PhpOffice\PhpWord\PhpWord();
 
-// Every element you want to append to the word document is placed in a section.
-// To create a basic section:
+/* Note: any element you append to a document must reside inside of a Section. */
+
+// Adding an empty Section to the document...
 $section = $phpWord->addSection();
-
-// After creating a section, you can append elements:
-$section->addText('Hello world!');
-
-// You can directly style your text by giving the addText function an array:
-$section->addText('Hello world! I am formatted.',
-    array('name'=>'Tahoma', 'size'=>16, 'bold'=>true));
-
-// If you often need the same style again you can create a user defined style
-// to the word document and give the addText function the name of the style:
-$phpWord->addFontStyle('myOwnStyle',
-    array('name'=>'Verdana', 'size'=>14, 'color'=>'1B2232'));
-$section->addText('Hello world! I am formatted by a user defined style',
-    'myOwnStyle');
-
-// You can also put the appended element to local object like this:
-$fontStyle = array(
-    'name' => 'Verdana',
-    'size' => 22,
-    'bold' => true,
+// Adding Text element to the Section having font styled by default...
+$section->addText(
+    htmlspecialchars(
+        '"Learn from yesterday, live for today, hope for tomorrow. '
+            . 'The important thing is not to stop questioning." '
+            . '(Albert Einstein)',
+        ENT_COMPAT,
+        'UTF-8'
+    )
 );
-$myTextElement = $section->addText('Hello World!');
+
+/*
+ * Note: it's possible to customize font style of the Text element you add in three ways:
+ * - inline;
+ * - using named font style (new font style object will be implicitly created);
+ * - using explicitly created font style object.
+ */
+
+// Adding Text element with font customized inline...
+$section->addText(
+    htmlspecialchars(
+        '"Great achievement is usually born of great sacrifice, '
+            . 'and is never the result of selfishness." '
+            . '(Napoleon Hill)',
+        ENT_COMPAT,
+        'UTF-8'
+    ),
+    array('name' => 'Tahoma', 'size' => 10)
+);
+
+// Adding Text element with font customized using named font style...
+$fontStyleName = 'oneUserDefinedStyle';
+$phpWord->addFontStyle(
+    $fontStyleName,
+    array('name' => 'Tahoma', 'size' => 10, 'color' => '1B2232', 'bold' => true)
+);
+$section->addText(
+    htmlspecialchars(
+        '"The greatest accomplishment is not in never falling, '
+            . 'but in rising again after you fall." '
+            . '(Vince Lombardi)',
+        ENT_COMPAT,
+        'UTF-8'
+    ),
+    $fontStyleName
+);
+
+// Adding Text element with font customized using explicitly created font style object...
+$fontStyle = new \PhpOffice\PhpWord\Style\Font();
+$fontStyle->setBold(true);
+$fontStyle->setName('Tahoma');
+$fontStyle->setSize(13);
+$myTextElement = $section->addText(
+    htmlspecialchars('"Believe you can and you\'re halfway there." (Theodor Roosevelt)', ENT_COMPAT, 'UTF-8')
+);
 $myTextElement->setFontStyle($fontStyle);
 
-// Finally, save the document:
-$phpWord->save('helloWorld.docx');
-$phpWord->save('helloWorld.odt', 'ODText');
-$phpWord->save('helloWorld.rtf', 'RTF');
+// Saving the document as OOXML file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+$objWriter->save('helloWorld.docx');
+
+// Saving the document as ODF file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'ODText');
+$objWriter->save('helloWorld.odt');
+
+// Saving the document as HTML file...
+$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+$objWriter->save('helloWorld.html');
+
+/* Note: we skip RTF, because it's not XML-based and requires a different example. */
+/* Note: we skip PDF, because "HTML-to-PDF" approach is used to create PDF documents. */
 ```
 
 ## Settings
@@ -471,7 +517,7 @@ Inline style examples:
 
 ```php
 $fontStyle = array('name' => 'Times New Roman', 'size' => 9);
-$paragraphStyle = array('align' => 'both');
+$paragraphStyle = array('alignment' => 'both');
 $section->addText('I am simple paragraph', $fontStyle, $paragraphStyle);
 
 $textrun = $section->addTextRun();
@@ -487,7 +533,7 @@ $fontStyle = array('color' => '006699', 'size' => 18, 'bold' => true);
 $phpWord->addFontStyle('fStyle', $fontStyle);
 $text = $section->addText('Hello world!', 'fStyle');
 
-$paragraphStyle = array('align' => 'center');
+$paragraphStyle = array('alignment' => 'center');
 $phpWord->addParagraphStyle('pStyle', $paragraphStyle);
 $text = $section->addText('Hello world!', 'pStyle');
 ```
@@ -807,7 +853,7 @@ Available font styles:
 
 Available paragraph styles:
 
-- `align` Paragraph alignment, *left*, *right* or *center*
+- `alignment` Paragraph alignment, *left*, *right* or *center*
 - `spaceBefore` Space before paragraph
 - `spaceAfter` Space after paragraph
 - `indent` Indent by how much

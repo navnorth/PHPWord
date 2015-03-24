@@ -64,8 +64,15 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($iVal, $oSettings->getHeaderHeight());
 
         $oSettings->setSettingValue('lineNumbering', array());
-        $oSettings->setSettingValue('lineNumbering', array('start' => 1, 'increment' => 1,
-            'distance' => 240, 'restart' => 'newPage'));
+        $oSettings->setSettingValue(
+            'lineNumbering',
+            array(
+                'start'     => 1,
+                'increment' => 1,
+                'distance'  => 240,
+                'restart'   => 'newPage',
+            )
+        );
         $this->assertInstanceOf('PhpOffice\\PhpWord\\Style\\LineNumbering', $oSettings->getLineNumbering());
 
         $oSettings->setSettingValue('lineNumbering', null);
@@ -95,6 +102,34 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $iVal = rand(1, 1000);
         $oSettings->setMarginRight($iVal);
         $this->assertEquals($iVal, $oSettings->getMarginRight());
+    }
+
+    /**
+     * Set/get page width
+     */
+    public function testPageWidth()
+    {
+        // Section Settings
+        $oSettings = new Section();
+
+        $this->assertEquals(Section::DEFAULT_WIDTH, $oSettings->getPageSizeW());
+        $iVal = rand(1, 1000);
+        $oSettings->setSettingValue('pageSizeW', $iVal);
+        $this->assertEquals($iVal, $oSettings->getPageSizeW());
+    }
+
+    /**
+     * Set/get page height
+     */
+    public function testPageHeight()
+    {
+        // Section Settings
+        $oSettings = new Section();
+
+        $this->assertEquals(Section::DEFAULT_HEIGHT, $oSettings->getPageSizeH());
+        $iVal = rand(1, 1000);
+        $oSettings->setSettingValue('pageSizeH', $iVal);
+        $this->assertEquals($iVal, $oSettings->getPageSizeH());
     }
 
     /**

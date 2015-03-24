@@ -122,7 +122,7 @@ class PhpWord
 
         $styles = array('Paragraph', 'Font', 'Table', 'Numbering', 'Link', 'Title');
         foreach ($styles as $style) {
-            $addStyle[] = strtolower("add{$style}style");
+            $addStyle[] = strtolower("add{$style}Style");
         }
 
         // Run get collection method
@@ -139,7 +139,7 @@ class PhpWord
             /** @var \PhpOffice\PhpWord\Collection\AbstractCollection $collectionObject */
             $collectionObject = $this->collections[$key];
 
-            return $collectionObject->addItem(array_key_exists(0, $args) ? $args[0] : null);
+            return $collectionObject->addItem(isset($args[0]) ? $args[0] : null);
         }
 
         // Run add style method
